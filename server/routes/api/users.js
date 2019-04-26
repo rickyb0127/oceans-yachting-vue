@@ -1,13 +1,28 @@
 const express = require("express");
+const fs = require('fs');
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-
 const router = express.Router();
+const Schema = mongoose.Schema;
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    cb(null, './img/');
+  },
+  filename: function(req, file, cb) {
+    cb(null, file.originalname);
+  }
+});
+
+const upload = multer({storage: storage});
 
 const UserSchema = new Schema({
   first_name: String,
   last_name: String,
+  title: String,
   bio: String,
+  quote: String,
+  bullet_points: [String],
   photo: String
 });
 
@@ -42,12 +57,16 @@ router.get("/", (req, res) => {
 });
 
 //POST
-router.post("/", (req, res) => {
+router.post("/", upload.single('photo'), (req, res) => {
+  console.log(req.file.filename);
   var new_user = new User({
     first_name: req.body.firstName,
     last_name: req.body.lastName,
+    title: req.body.title,
     bio: req.body.bio,
-    photo: req.body.photo
+    quote: req.body.quote,
+    bullet_points: req.body.bullet_points,
+    photo: req.file.filename
   });
 
   new_user.save(function (error) {
