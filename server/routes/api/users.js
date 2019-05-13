@@ -23,7 +23,7 @@ const UserSchema = new Schema({
   bio: String,
   quote: String,
   bullet_points: [String],
-  photo: String
+  photo_name: String
 });
 
 const User = mongoose.model('User', UserSchema);
@@ -58,15 +58,18 @@ router.get("/", (req, res) => {
 
 //POST
 router.post("/", upload.single('photo'), (req, res) => {
-  console.log(req.file.filename);
+  const re = /,\s/;
+  let bulletPointsArray = req.body.bullets.split(re);
+  let photoString = req.body.first_name.toLowerCase() + '-' + req.body.last_name.toLowerCase() + '.jpg';
+
   var new_user = new User({
-    first_name: req.body.firstName,
-    last_name: req.body.lastName,
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
     title: req.body.title,
     bio: req.body.bio,
     quote: req.body.quote,
-    bullet_points: req.body.bullet_points,
-    photo: req.file.filename
+    bullet_points: bulletPointsArray,
+    photo_name: photoString
   });
 
   new_user.save(function (error) {
