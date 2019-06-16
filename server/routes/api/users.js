@@ -24,24 +24,13 @@ const UserSchema = new Schema({
   quote: String,
   bullet_points: [String],
   photo_name: String
+}, {
+  timestamps: true
+}, {
+  collection: 'users'
 });
 
 const User = mongoose.model('User', UserSchema);
-
-const dbRoute = "mongodb://admin:Wookie2000@ds155411.mlab.com:55411/oceans-yachting";
-
-// connects our back end code with the database
-mongoose.connect(
-  dbRoute,
-  { useNewUrlParser: true }
-);
-
-let db = mongoose.connection;
-
-db.once("open", () => console.log("connected to the database"));
-
-// checks if connection with the database is successful
-db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 //GET
 router.get("/", (req, res) => {

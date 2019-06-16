@@ -10,12 +10,29 @@ app.use(morgan("combined"));
 app.use(bodyParser.json());
 app.use(cors());
 
-const users = require("./routes/api/users");
+const dbRoute = "mongodb://admin:Wookie2000@ds155411.mlab.com:55411/oceans-yachting";
+
+// connects our back end code with the database
+mongoose.connect(
+  dbRoute,
+  { useNewUrlParser: true }
+);
+
+let db = mongoose.connection;
+
+db.once("open", () => console.log("connected to the database"));
+
+// checks if connection with the database is successful
+db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 if(process.env.NODE_ENV === "production") {
   app.use(express.static(__dirname + "/public/"));
 }
 
+const users = require("./routes/api/users");
+const posts = require("./routes/api/posts");
+
 app.use("/api/users", users);
+app.use("/api/posts", posts);
 
 app.listen(process.env.PORT || 8081);
