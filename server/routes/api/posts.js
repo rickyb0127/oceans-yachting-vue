@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 const Schema = mongoose.Schema;
+let middleware = require('../../middleware');
 
 const PostSchema = new Schema({
     title: String,
@@ -28,7 +29,7 @@ router.get("/", (req, res) => {
 });
 
 //POST
-router.post("/", (req, res) => {
+router.post("/", middleware.checkToken, (req, res) => {
   var new_post = new Post({
     title: req.body.title,
     body: req.body.body

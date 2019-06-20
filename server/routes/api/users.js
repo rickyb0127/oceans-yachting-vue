@@ -1,29 +1,17 @@
 const express = require("express");
-const fs = require('fs');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const mongoose = require("mongoose");
 const router = express.Router();
 const Schema = mongoose.Schema;
-const multer = require('multer');
-
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, './img/');
-  },
-  filename: function(req, file, cb) {
-    cb(null, file.originalname);
-  }
-});
-
-const upload = multer({storage: storage});
+let config = require('../../config');
 
 const UserSchema = new Schema({
   first_name: String,
   last_name: String,
-  title: String,
-  bio: String,
-  quote: String,
-  bullet_points: [String],
-  photo_name: String
+  email: String,
+  password: String,
+  isAdmin: Boolean
 }, {
   timestamps: true
 }, {
@@ -45,20 +33,15 @@ router.get("/", (req, res) => {
   });
 });
 
-//POST
-router.post("/", upload.single('photo'), (req, res) => {
-  const re = /,\s/;
-  let bulletPointsArray = req.body.bullets.split(re);
-  let photoString = req.body.first_name.toLowerCase() + '-' + req.body.last_name.toLowerCase() + '.jpg';
-
+// Register
+router.post("/register", (req, res) => {
+  var hash = bcrypt.hashSync(req.body.password, 8);
   var new_user = new User({
     first_name: req.body.first_name,
     last_name: req.body.last_name,
-    title: req.body.title,
-    bio: req.body.bio,
-    quote: req.body.quote,
-    bullet_points: bulletPointsArray,
-    photo_name: photoString
+    email: req.body.email,
+    password: hash,
+    isAdmin: true
   });
 
   new_user.save(function (error) {
@@ -71,6 +54,38 @@ router.post("/", upload.single('photo'), (req, res) => {
       });
     }
   });
+});
+
+// Login
+router.post("/login", (req, res) => {
+  User.findOne({ email: req.body.email }, function (error, user) {
+    if(error) {
+      return res.status(500).send('Error on the server.');
+    } 
+    if(!user) {
+      return res.status(404).send('No user found.');
+    } 
+
+    let passwordIsValid = bcrypt.compareSync(req.body.password, user.password);
+    if(!passwordIsValid) {
+      return res.status(401).send({ auth: false, token: null });
+    } else {
+      var secret;
+      if(process.env.NODE_ENV === "production") {
+        secret = process.env.JWT_SECRET;
+      } else {
+        secret = config.secret;
+      }
+
+      let token = jwt.sign({
+        username: user.email
+      },secret,
+      { 
+        expiresIn: '24h' // expires in 24 hours
+      });
+      res.status(200).send({ auth: true, token: token, user: user });
+    }
+  })
 });
 
 //DELETE

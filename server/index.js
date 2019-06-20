@@ -29,9 +29,11 @@ if(process.env.NODE_ENV === "production") {
   app.use(express.static(__dirname + "/public/"));
 }
 
+const employees = require("./routes/api/employees");
 const users = require("./routes/api/users");
 const posts = require("./routes/api/posts");
 
+app.use("/api/employees", employees);
 app.use("/api/users", users);
 app.use("/api/posts", posts);
 
