@@ -11,9 +11,11 @@
   "author": "Eric Bartsch",
   "license": "MIT",
   "dependencies": {
+    "airbrake-js": "^1.6.8",
     "bcrypt": "^3.0.6",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
+    "cross-fetch": "^3.0.4",
     "express": "^4.16.4",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.4.20",
