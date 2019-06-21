@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const mongoose = require("mongoose");
 const router = express.Router();
 const Schema = mongoose.Schema;
-let config = require('../../config');
 
 const UserSchema = new Schema({
   first_name: String,
@@ -74,6 +73,7 @@ router.post("/login", (req, res) => {
       if(process.env.NODE_ENV === "production") {
         secret = process.env.JWT_SECRET;
       } else {
+        const config = require('../../config');
         secret = config.secret;
       }
 

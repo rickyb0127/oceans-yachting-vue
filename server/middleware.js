@@ -1,5 +1,4 @@
 let jwt = require('jsonwebtoken');
-const config = require('./config.js');
 
 let checkToken = (req, res, next) => {
   let token = req.headers['x-access-token'] || req.headers['authorization']; // Express headers are auto converted to lowercase
@@ -8,6 +7,7 @@ let checkToken = (req, res, next) => {
     if(process.env.NODE_ENV === "production") {
       secret = process.env.JWT_SECRET;
     } else {
+      const config = require('./config.js');
       secret = config.secret;
     }
 
@@ -15,7 +15,7 @@ let checkToken = (req, res, next) => {
       // Remove Bearer from string
       token = token.slice(7, token.length);
     }
-    
+
     jwt.verify(token,secret, (err, decoded) => {
       if (err) {
         console.log(err);
