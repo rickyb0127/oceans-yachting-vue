@@ -46,9 +46,10 @@ router.get("/", (req, res) => {
 
 //POST
 router.post("/", upload.single('photo'), (req, res) => {
-  const re = /,\s/;
-  let bulletPointsArray = req.body.bullets.split(re);
+  // const re = /,\s/;
+  let bulletPointsArray = req.body.bullets.split(",");
   let photoString = req.body.first_name.toLowerCase() + '-' + req.body.last_name.toLowerCase() + '.jpg';
+  console.log(bulletPointsArray);
 
   var new_employee = new Employee({
     first_name: req.body.first_name,

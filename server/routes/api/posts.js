@@ -47,8 +47,47 @@ router.post("/", middleware.checkToken, (req, res) => {
   });
 });
 
+//EDIT
+router.get("/:id", function (req, res) {
+  const id = req.params.id;
+  Post.findById(id, function (err, post){
+    res.send({
+      post
+    });
+  });
+});
+
+//UPDATE 
+router.put("/:id", middleware.checkToken, function(req, res) {
+  Post.findOne({ _id: req.params.id }, function (error, post) {
+    if(error) {
+      return res.status(500).send('Error on the server.');
+    } 
+    if(!post) {
+      return res.status(404).send('No post found.');
+    } 
+    if(req.body.title) {
+      post.title = req.body.title;
+    }
+    if(req.body.body) {
+      post.body = req.body.body;
+    }
+
+    post.save(function (error) {
+      if (error) {
+        console.log(error);
+      } else {
+        res.send({
+          success: true,
+          message: "Post updated successfully"
+        });
+      }
+    });
+  });
+});
+
 //DELETE
-router.delete("/:id", (req, res) => {
+router.delete("/:id", middleware.checkToken, (req, res) => {
   Post.deleteOne({
     _id: req.params.id
   }, function (error, post) {

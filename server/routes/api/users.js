@@ -78,14 +78,14 @@ router.post("/login", (req, res) => {
       }
 
       let token = jwt.sign({
-        username: user.email
+        user: user.email
       },secret,
       { 
         expiresIn: '24h' // expires in 24 hours
       });
       res.status(200).send({ auth: true, token: token, user: user });
     }
-  })
+  });
 });
 
 //DELETE
