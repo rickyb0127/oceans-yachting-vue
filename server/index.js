@@ -6,6 +6,20 @@ const mongoose = require("mongoose");
 
 const app = express();
 
+import AirbrakeClient from 'airbrake-js';
+
+var airbrake = new AirbrakeClient({
+  projectId: 232482,
+  projectKey: 'a316566f51c9b5c1f1d38c099073dd59'
+});
+
+Vue.config.errorHandler = function (err, vm, info) {
+  airbrake.notify({
+    error: err,
+    params: {info: info}
+  });
+}
+
 app.use(morgan("combined"));
 app.use(bodyParser.json());
 app.use(cors());
