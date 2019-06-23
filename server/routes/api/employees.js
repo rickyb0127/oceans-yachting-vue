@@ -38,8 +38,7 @@ router.get("/", (req, res) => {
       console.error(error);
     } else {
       res.send({
-        employees,
-        foo: process.env.TEST
+        employees
       });
     }
   });

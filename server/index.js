@@ -27,6 +27,9 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 if(process.env.NODE_ENV === "production") {
   app.use(express.static(__dirname + "/public/"));
+  app.get('*', function (req, res) {
+    res.sendFile(__dirname + '/public/index.html');
+  });
 }
 
 const employees = require("./routes/api/employees");
