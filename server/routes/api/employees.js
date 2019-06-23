@@ -38,7 +38,8 @@ router.get("/", (req, res) => {
       console.error(error);
     } else {
       res.send({
-        employees
+        employees,
+        foo: process.env.TEST
       });
     }
   });
@@ -49,7 +50,6 @@ router.post("/", upload.single('photo'), (req, res) => {
   // const re = /,\s/;
   let bulletPointsArray = req.body.bullets.split(",");
   let photoString = req.body.first_name.toLowerCase() + '-' + req.body.last_name.toLowerCase() + '.jpg';
-  console.log(bulletPointsArray);
 
   var new_employee = new Employee({
     first_name: req.body.first_name,
