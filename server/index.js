@@ -27,7 +27,16 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 if(process.env.NODE_ENV === "production") {
   app.use(express.static(__dirname + "/public/"));
-  app.get('*', function (req, res) {
+  app.get('/admin', function (req, res) {
+    res.sendFile(__dirname + '/public/index.html');
+  });
+  app.get('/edit-blog', function (req, res) {
+    res.sendFile(__dirname + '/public/index.html');
+  });
+  app.get('/edit-company-profile', function (req, res) {
+    res.sendFile(__dirname + '/public/index.html');
+  });
+  app.get('/login', function (req, res) {
     res.sendFile(__dirname + '/public/index.html');
   });
 }
