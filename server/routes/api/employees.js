@@ -4,7 +4,6 @@ const router = express.Router();
 const Schema = mongoose.Schema;
 const multer = require('multer');
 let middleware = require('../../middleware');
-const config = require('../../config.js');
 const aws = require('aws-sdk');
 const multerS3 = require('multer-s3');
 
@@ -15,6 +14,7 @@ if(process.env.NODE_ENV === "production") {
     region: 'us-west-1'
   });
 } else {
+  const config = require('../../config.js');
   aws.config.update({
     accessKeyId: config.accessKeyId,
     secretAccessKey: config.secretAccessKey,
@@ -106,15 +106,15 @@ router.get("/:id", function (req, res) {
   });
 });
 
-//UPDATE 
+//UPDATE
 router.put("/:id", middleware.checkToken, upload.single('photo'), function(req, res) {
   Employee.findOne({ _id: req.params.id }, function (error, employee) {
     if(error) {
       return res.status(500).send('Error on the server.');
-    } 
+    }
     if(!employee) {
       return res.status(404).send('No employee found.');
-    } 
+    }
 
     if(req.body.first_name) {
       employee.first_name = req.body.first_name;
