@@ -4,17 +4,36 @@ const router = express.Router();
 const Schema = mongoose.Schema;
 const multer = require('multer');
 let middleware = require('../../middleware');
+const config = require('../../config.js');
+const aws = require('aws-sdk');
+const multerS3 = require('multer-s3');
 
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, './img/');
-  },
-  filename: function(req, file, cb) {
-    cb(null, file.originalname);
-  }
+if(process.env.NODE_ENV === "production") {
+  aws.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: 'us-west-1'
+  });
+} else {
+  aws.config.update({
+    accessKeyId: config.accessKeyId,
+    secretAccessKey: config.secretAccessKey,
+    region: 'us-west-1'
+  });
+}
+
+var s3 = new aws.S3();
+
+const upload = multer({
+    storage: multerS3({
+        s3: s3,
+        bucket: 'oceans-yachting',
+        acl: 'public-read',
+        key: function (req, file, cb) {
+          cb(null, `${Date.now().toString()}-${file.originalname}`);
+        }
+    })
 });
-
-const upload = multer({storage: storage});
 
 const EmployeeSchema = new Schema({
   first_name: String,
@@ -49,7 +68,11 @@ router.get("/", (req, res) => {
 router.post("/", upload.single('photo'), (req, res) => {
   let bulletPointsArray = req.body.bullets.split(",");
   let photoString = "generic-profile-picture.jpg";
-  // let photoString = req.body.first_name.toLowerCase() + '-' + req.body.last_name.toLowerCase() + '.jpg';
+  if(req.file) {
+    photoString = req.file.key;
+  } else {
+    photoString = ""
+  }
 
   var new_employee = new Employee({
     first_name: req.body.first_name,
@@ -84,7 +107,7 @@ router.get("/:id", function (req, res) {
 });
 
 //UPDATE 
-router.put("/:id", middleware.checkToken, function(req, res) {
+router.put("/:id", middleware.checkToken, upload.single('photo'), function(req, res) {
   Employee.findOne({ _id: req.params.id }, function (error, employee) {
     if(error) {
       return res.status(500).send('Error on the server.');
@@ -112,9 +135,8 @@ router.put("/:id", middleware.checkToken, function(req, res) {
       let bulletPointsArray = req.body.bullet_points.split(",");
       employee.bullet_points = bulletPointsArray;
     }
-    if(req.body.photo_string) {
-      // let photoString = req.body.first_name.toLowerCase() + '-' + req.body.last_name.toLowerCase() + '.jpg';
-      employee.photo_name = req.body.photo_string;
+    if(req.file) {
+      employee.photo_name = req.file.key
     }
 
     employee.save(function (error) {
