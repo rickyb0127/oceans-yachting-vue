@@ -6,7 +6,10 @@ let middleware = require('../../middleware');
 
 const PostSchema = new Schema({
     title: String,
-    body: String
+    body: {
+      type: String,
+      required: true
+    }
   }, {
     timestamps: true
   }, {
@@ -16,10 +19,10 @@ const PostSchema = new Schema({
 const Post = mongoose.model('Post', PostSchema);
 
 //GET
-router.get("/", (req, res) => {
+router.get("/", middleware.checkToken, (req, res) => {
   Post.find({}, function (error, posts) {
     if (error) {
-      console.error(error);
+      res.send(error);
     } else {
       res.send({
         posts
@@ -36,8 +39,8 @@ router.post("/", middleware.checkToken, (req, res) => {
   });
 
   new_post.save(function (error) {
-    if (error) {
-      console.log(error);
+    if(error) {
+    res.status(400).send(error);
     } else {
       res.send({
         success: true,
@@ -75,7 +78,7 @@ router.put("/:id", middleware.checkToken, function(req, res) {
 
     post.save(function (error) {
       if (error) {
-        console.log(error);
+        res.send(error);
       } else {
         res.send({
           success: true,
@@ -92,10 +95,11 @@ router.delete("/:id", middleware.checkToken, (req, res) => {
     _id: req.params.id
   }, function (error, post) {
     if (error) {
-      res.send(error)
+      res.send(error);
     } else {
       res.send({
-        success: true
+        success: true,
+        message: "Post deleted successfully"
       });
     }
   });
