@@ -55,7 +55,20 @@ const Employee = mongoose.model('Employee', EmployeeSchema);
 router.get("/", (req, res) => {
   Employee.find({}, function (error, employees) {
     if (error) {
-      console.error(error);
+      res.send(error);
+    } else {
+      res.send({
+        employees
+      });
+    }
+  });
+});
+
+//GET ADMIN
+router.get("/admin", middleware.checkToken, (req, res) => {
+  Employee.find({}, function (error, employees) {
+    if (error) {
+      res.send(error);
     } else {
       res.send({
         employees
@@ -65,7 +78,7 @@ router.get("/", (req, res) => {
 });
 
 //POST
-router.post("/", upload.single('photo'), (req, res) => {
+router.post("/", middleware.checkToken, upload.single('photo'), (req, res) => {
   let bulletPointsArray = req.body.bullets.split(",");
   let photoString = "generic-profile-picture.jpg";
   if(req.file) {
@@ -86,7 +99,7 @@ router.post("/", upload.single('photo'), (req, res) => {
 
   new_employee.save(function (error) {
     if (error) {
-      console.log(error);
+      res.status(400).send(error);
     } else {
       res.send({
         success: true,
@@ -141,7 +154,7 @@ router.put("/:id", middleware.checkToken, upload.single('photo'), function(req, 
 
     employee.save(function (error) {
       if (error) {
-        console.log(error);
+        res.send(error);
       } else {
         res.send({
           success: true,
@@ -161,7 +174,8 @@ router.delete("/:id", middleware.checkToken, (req, res) => {
       res.send(error)
     } else {
       res.send({
-        success: true
+        success: true,
+        message: "Employee deleted successfully"
       });
     }
   });

@@ -19,7 +19,20 @@ const PostSchema = new Schema({
 const Post = mongoose.model('Post', PostSchema);
 
 //GET
-router.get("/", middleware.checkToken, (req, res) => {
+router.get("/", (req, res) => {
+  Post.find({}, function (error, posts) {
+    if (error) {
+      res.send(error);
+    } else {
+      res.send({
+        posts
+      });
+    }
+  });
+});
+
+//GET ADMIN
+router.get("/admin", middleware.checkToken, (req, res) => {
   Post.find({}, function (error, posts) {
     if (error) {
       res.send(error);
