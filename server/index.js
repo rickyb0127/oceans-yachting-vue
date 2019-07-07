@@ -44,9 +44,11 @@ if(process.env.NODE_ENV === "production") {
 const employees = require("./routes/api/employees");
 const users = require("./routes/api/users");
 const posts = require("./routes/api/posts");
+const backgrounds = require("./routes/api/backgrounds");
 
 app.use("/api/employees", employees);
 app.use("/api/users", users);
 app.use("/api/posts", posts);
+app.use("/api/backgrounds", backgrounds);
 
 app.listen(process.env.PORT || 8081);
