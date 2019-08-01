@@ -10,7 +10,13 @@ app.use(morgan("combined"));
 app.use(bodyParser.json());
 app.use(cors());
 
-const dbRoute = "mongodb://admin:Wookie2000@ds155411.mlab.com:55411/oceans-yachting";
+var dbRoute;
+if(process.env.NODE_ENV === "production") {
+  dbRoute = process.env.DB_ROUTE;
+} else {
+  const config = require('./config.js');
+  dbRoute = config.dbRoute;
+}
 
 // connects our back end code with the database
 mongoose.connect(

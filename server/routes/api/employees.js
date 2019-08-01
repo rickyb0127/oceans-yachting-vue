@@ -42,7 +42,8 @@ const EmployeeSchema = new Schema({
   bio: String,
   quote: String,
   bullet_points: [String],
-  photo_name: String
+  photo_name: String,
+  local_photo_name: String,
 }, {
   timestamps: true
 }, {
