@@ -4,24 +4,24 @@ const router = express.Router();
 const Schema = mongoose.Schema;
 let middleware = require('../../middleware');
 
-const YachtManagementSchema = new Schema({
+const EngineeringSchema = new Schema({
 	text: String
 }, {
   timestamps: true
 }, {
-  collection: 'yachtmanagements'
+  collection: 'engineerings'
 });
 
-const YachtManagement = mongoose.model('YachtManagement', YachtManagementSchema);
+const Engineering = mongoose.model('Engineering', EngineeringSchema);
 
 //GET
 router.get("/", (req, res) => {
-	YachtManagement.find({}, function (error, yachtmanagements) {
+	Engineering.find({}, function (error, engineerings) {
 		if (error) {
 			res.send(error);
 		} else {
 			res.send({
-				yachtmanagements
+				engineerings
 			});
 		}
 	});
@@ -29,17 +29,17 @@ router.get("/", (req, res) => {
 
 //POST
 router.post("/", middleware.checkToken, (req, res) => {
-  var new_yacht_management = new YachtManagement({
+  var new_engineering = new Engineering({
 		text: req.body.text
   });
 
-  new_yacht_management.save(function (error) {
+  new_engineering.save(function (error) {
     if (error) {
       res.status(400).send(error);
     } else {
       res.send({
         success: true,
-        message: "Yacht management saved successfully"
+        message: "Engineering saved successfully"
       });
     }
   });
@@ -47,23 +47,23 @@ router.post("/", middleware.checkToken, (req, res) => {
 
 //UPDATE
 router.put("/:id", middleware.checkToken, function(req, res) {
-	YachtManagement.findOne({ _id: req.params.id }, function (error, yachtmanagement) {
+	Engineering.findOne({ _id: req.params.id }, function (error, engineering) {
     if(error) {
       return res.status(500).send('Error on the server.');
     }
-    if(!yachtmanagement) {
-      return res.status(404).send('Yacht management not found.');
+    if(!engineering) {
+      return res.status(404).send('Engineering not found.');
 		}
 		
 		if(req.body.text) {
-      yachtmanagement.text = req.body.text;
+      engineering.text = req.body.text;
     }
 
-    yachtmanagement.save(function (error) {
+    engineering.save(function (error) {
       if (error) {
         res.send(error);
       } else {
-        res.send({ yachtmanagement });
+        res.send({ engineering });
       }
     });
   });
