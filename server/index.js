@@ -51,10 +51,12 @@ const employees = require("./routes/api/employees");
 const users = require("./routes/api/users");
 const posts = require("./routes/api/posts");
 const backgrounds = require("./routes/api/backgrounds");
+const yachtManagements = require("./routes/api/yacht-managements");
 
 app.use("/api/employees", employees);
 app.use("/api/users", users);
 app.use("/api/posts", posts);
 app.use("/api/backgrounds", backgrounds);
+app.use("/api/yacht-managements", yachtManagements);
 
 app.listen(process.env.PORT || 8081);
