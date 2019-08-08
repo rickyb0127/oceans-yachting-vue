@@ -32,29 +32,6 @@ router.get("/", (req, res) => {
   });
 });
 
-// Register
-router.post("/register", (req, res) => {
-  var hash = bcrypt.hashSync(req.body.password, 8);
-  var new_user = new User({
-    first_name: req.body.first_name,
-    last_name: req.body.last_name,
-    email: req.body.email,
-    password: hash,
-    isAdmin: true
-  });
-
-  new_user.save(function (error) {
-    if (error) {
-      console.log(error);
-    } else {
-      res.send({
-        success: true,
-        message: "User saved successfully"
-      });
-    }
-  });
-});
-
 // Login
 router.post("/login", (req, res) => {
   User.findOne({ email: req.body.email }, function (error, user) {
