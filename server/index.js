@@ -54,6 +54,7 @@ const backgrounds = require("./routes/api/backgrounds");
 const yachtManagements = require("./routes/api/yacht-managements");
 const engineerings = require("./routes/api/engineerings");
 const aviations = require("./routes/api/aviations");
+const auth = require("./routes/api/auth");
 
 app.use("/api/employees", employees);
 app.use("/api/users", users);
@@ -62,5 +63,6 @@ app.use("/api/backgrounds", backgrounds);
 app.use("/api/yacht-managements", yachtManagements);
 app.use("/api/engineerings", engineerings);
 app.use("/api/aviations", aviations);
+app.use("/api/auth", auth);
 
 app.listen(process.env.PORT || 8081);

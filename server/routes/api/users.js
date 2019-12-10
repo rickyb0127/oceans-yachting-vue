@@ -65,6 +65,48 @@ router.post("/login", (req, res) => {
   });
 });
 
+router.post("/register", (req, res) => {
+  var hash = bcrypt.hashSync(req.body.password, 8);
+  var new_user = new User({
+    email: req.body.email,
+    password: hash
+  });
+
+  new_user.save(function(error) {
+    if(error) {
+      if(error.name === "ValidationError") {
+        return res.status(400).send({ 
+          errorMessage: 'User with registered email already exists' 
+        });
+      }
+      res.status(400).send(error);
+    } else {
+      var secret;
+      var user = new_user;
+
+      if(process.env.NODE_ENV === "production") {
+        secret = process.env.JWT_SECRET;
+      } else {
+        const config = require('../../config');
+        secret = config.secret;
+      }
+
+      let token = jwt.sign({
+        user: user.email
+      }, secret,
+      { 
+        expiresIn: '24h' // expires in 24 hours
+      });
+      // let token = jwt.sign({
+      //   user: user.email
+      // }, secret);
+      res.status(200).send({ 
+        auth: true, token: token, user_id: user._id 
+      });
+    }
+  });
+});
+
 //DELETE
 router.delete("/:id", (req, res) => {
   User.deleteOne({
