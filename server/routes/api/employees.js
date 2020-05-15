@@ -11,14 +11,14 @@ if(process.env.NODE_ENV === "production") {
   aws.config.update({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: 'us-west-1'
+    region: 'us-west-2'
   });
 } else {
   const config = require('../../config.js');
   aws.config.update({
     accessKeyId: config.accessKeyId,
     secretAccessKey: config.secretAccessKey,
-    region: 'us-west-1'
+    region: 'us-west-2'
   });
 }
 
