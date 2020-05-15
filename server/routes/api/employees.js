@@ -27,7 +27,7 @@ var s3 = new aws.S3();
 const upload = multer({
     storage: multerS3({
         s3: s3,
-        bucket: 'oceans-yachting',
+        bucket: 'oceansyachting',
         acl: 'public-read',
         key: function (req, file, cb) {
           cb(null, `${Date.now().toString()}-${file.originalname}`);
